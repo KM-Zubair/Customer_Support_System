@@ -1,6 +1,7 @@
 # Customer Support System
 
-This project implements a web-based Customer Support System that uses web crawling and AI-powered question answering to provide automated support for a website.
+This project implements a web-based Customer Support System that uses web crawling and AI-powered question answering to provide automated support for a website. 
+[Presentation Slides](https://docs.google.com/presentation/d/1rKsmLHrEnVa7QTwT4w_B78AbU5fJGyFYbgopWkpXD_c/edit?usp=sharing)
 
 ## Project Overview
 

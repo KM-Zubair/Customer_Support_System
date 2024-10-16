@@ -10,6 +10,7 @@ __pycache__/
 
 # Specific file to ignore
 web-qa.py
+web-qa.ipynb
 
 # Ignore processed and text folders
 processed/

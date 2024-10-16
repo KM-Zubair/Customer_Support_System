@@ -22,10 +22,11 @@ HTTP_URL_PATTERN = r'^http[s]{0,1}://.+$'
 
 # Define OpenAI api_key
 # openai.api_key = '<Your API Key>'
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # Define root domain to crawl
-domain = "openai.com"
-full_url = "https://openai.com/"
+domain = "simpleprogrammer.com"
+full_url = "https://simpleprogrammer.com/blog-2/"
 
 # Create a class to parse the HTML and get the hyperlinks
 class HyperlinkParser(HTMLParser):
@@ -47,28 +48,23 @@ class HyperlinkParser(HTMLParser):
 ################################################################################
 
 # Function to get the hyperlinks from a URL
-def get_hyperlinks(url):
-    
-    # Try to open the URL and read the HTML
-    try:
-        # Open the URL and read the HTML
-        with urllib.request.urlopen(url) as response:
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
-            # If the response is not HTML, return an empty list
+def get_hyperlinks(url):
+    try:
+        request = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(request) as response:
             if not response.info().get('Content-Type').startswith("text/html"):
                 return []
-            
-            # Decode the HTML
             html = response.read().decode('utf-8')
     except Exception as e:
         print(e)
         return []
 
-    # Create the HTML Parser and then Parse the HTML to get hyperlinks
     parser = HyperlinkParser()
     parser.feed(html)
-
     return parser.hyperlinks
+
 
 ################################################################################
 ### Step 3
@@ -78,6 +74,9 @@ def get_hyperlinks(url):
 def get_domain_hyperlinks(local_domain, url):
     clean_links = []
     for link in set(get_hyperlinks(url)):
+        if link is None:  # Check if link is None
+            continue
+
         clean_link = None
 
         # If the link is a URL, check if it is within the same domain
@@ -106,6 +105,7 @@ def get_domain_hyperlinks(local_domain, url):
 
     # Return the list of hyperlinks that are within the same domain
     return list(set(clean_links))
+
 
 
 ################################################################################
@@ -173,11 +173,12 @@ crawl(full_url)
 ################################################################################
 
 def remove_newlines(serie):
-    serie = serie.str.replace('\n', ' ')
-    serie = serie.str.replace('\\n', ' ')
-    serie = serie.str.replace('  ', ' ')
-    serie = serie.str.replace('  ', ' ')
+    serie = serie.str.replace('\n', ' ', regex=True)
+    serie = serie.str.replace('\\n', ' ', regex=True)
+    serie = serie.str.replace('  ', ' ', regex=False)
+    serie = serie.str.replace('  ', ' ', regex=False)
     return serie
+
 
 
 ################################################################################
@@ -349,9 +350,17 @@ def create_context(
     # Return the context
     return "\n\n###\n\n".join(returns)
 
+
+
+import os
+from openai import OpenAI
+
+# Initialize the OpenAI client with the environment variable API key
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
 def answer_question(
     df,
-    model="text-davinci-003",
+    model="gpt-3.5-turbo",
     question="Am I allowed to publish model outputs to Twitter, without a human review?",
     max_len=1800,
     size="ada",
@@ -360,35 +369,45 @@ def answer_question(
     stop_sequence=None
 ):
     """
-    Answer a question based on the most similar context from the dataframe texts
+    Answer a question based on the most similar context from the dataframe texts.
     """
+    # Generate context based on the question and dataframe
     context = create_context(
         question,
         df,
         max_len=max_len,
         size=size,
     )
-    # If debug, print the raw model response
+
+    # Debug: Print the context if needed
     if debug:
         print("Context:\n" + context)
         print("\n\n")
 
     try:
-        # Create a completions using the questin and context
-        response = openai.Completion.create(
-            prompt=f"Answer the question based on the context below, and if the question can't be answered based on the context, say \"I don't know\"\n\nContext: {context}\n\n---\n\nQuestion: {question}\nAnswer:",
-            temperature=0,
+        # Use the OpenAI chat completions API
+        completion = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that answers questions based on the provided context."},
+                {"role": "user", "content": f"Context: {context}\n\n---\n\nQuestion: {question}\nAnswer:"}
+            ],
             max_tokens=max_tokens,
+            temperature=0,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
-            stop=stop_sequence,
-            model=model,
+            stop=stop_sequence
         )
-        return response["choices"][0]["text"].strip()
+
+        # Extract and return the model's response
+        return completion.choices[0].message["content"].strip()
+
     except Exception as e:
-        print(e)
+        print(f"Error: {e}")
         return ""
+
+
 
 ################################################################################
 ### Step 13

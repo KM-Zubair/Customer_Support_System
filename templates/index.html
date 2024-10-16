@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Q&A System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        #questionForm {
+            margin-bottom: 20px;
+        }
+        #question {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .answer-text {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Website Q&A System</h1>
+    <form id="questionForm">
+        <input type="text" id="question" placeholder="Ask a question about the website..." required>
+        <button type="submit">Ask</button>
+    </form>
+    <div id="loading">Processing your question...</div>
+    <div id="result">
+        <div class="question-text"></div>
+        <div class="answer-text"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#questionForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const question = $('#question').val();
+                $('#loading').show();
+                $('#result').hide();
+                
+                $.ajax({
+                    url: '/ask',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ question: question }),
+                    success: function(response) {
+                        $('#loading').hide();
+                        $('#result').show();
+                        $('.question-text').text('Q: ' + question);
+                        $('.answer-text').text('A: ' + response.answer);
+                    },
+                    error: function() {
+                        $('#loading').hide();
+                        alert('Error processing your question. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

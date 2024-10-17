@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Customer Support</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .section { display: none; }
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+    </style>
+    <script>
+        function showSection(sectionId) {
+            var sections = document.querySelectorAll('.section');
+            sections.forEach(function(section) {
+                section.style.display = 'none';
+            });
+            var sectionToShow = document.getElementById(sectionId);
+            if (sectionToShow) {
+                sectionToShow.style.display = 'block';
+            }
+        }
+
+        function addLanguageToForm(formId) {
+            var language = document.getElementById("language").value;
+            var form = document.getElementById(formId);
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "language";
+            input.value = language;
+            form.appendChild(input);
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">ChatGPT Customer Support System</h1>
+            
+            <!-- Language Selection -->
+            <div class="mb-6">
+                <label for="language" class="block text-sm font-medium text-gray-700 mb-2">Select Language:</label>
+                <select id="language" class="form-select block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    {% for lang in languages %}
+                        <option value="{{ lang }}" {% if selected_language == lang %}selected{% endif %}>{{ lang }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Action Selection -->
+            <div>
+                <label for="action" class="block text-sm font-medium text-gray-700 mb-2">Select an Action:</label>
+                <select id="action" onchange="showSection(this.value)" class="form-select block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <option value="">-- Select an Action --</option>
+                    <option value="generate-comment-section">1. Generate Customer Comment</option>
+                    <option value="generate-subject-section">2. Generate Email Subject</option>
+                    <option value="generate-summary-section">3. Generate Summary</option>
+                    <option value="analyze-sentiment-section">4. Analyze Sentiment</option>
+                    <option value="generate-email-section">5. Generate Complete Email</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Content Sections -->
+        <div class="space-y-6">
+            <!-- Generate Customer Comment Section -->
+            <div id="generate-comment-section" class="section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Generate Customer Comment</h2>
+                <form id="comment-form" method="POST" action="/generate_comment" onsubmit="addLanguageToForm('comment-form')" class="space-y-4">
+                    <div>
+                        <label for="product" class="block text-sm font-medium text-gray-700 mb-2">Select Product:</label>
+                        <select name="product" id="product" class="form-select block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            {% for product in products %}
+                                <option value="{{ product }}">{{ product }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Generate Comment
+                    </button>
+                </form>
+            </div>
+
+            <!-- Generate Email Subject Section -->
+            <div id="generate-subject-section" class="section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Generate Email Subject</h2>
+                <form id="subject-form" method="POST" action="/generate_subject" onsubmit="addLanguageToForm('subject-form')" class="space-y-4">
+                    <div>
+                        <label for="comment_subject" class="block text-sm font-medium text-gray-700 mb-2">Customer Comment:</label>
+                        <textarea name="comment" id="comment_subject" rows="4" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">{{ comment }}</textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Generate Subject
+                    </button>
+                </form>
+            </div>
+
+            <!-- Generate Summary Section -->
+            <div id="generate-summary-section" class="section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Generate Summary</h2>
+                <form id="summary-form" method="POST" action="/generate_summary" onsubmit="addLanguageToForm('summary-form')" class="space-y-4">
+                    <div>
+                        <label for="comment_summary" class="block text-sm font-medium text-gray-700 mb-2">Customer Comment:</label>
+                        <textarea name="comment" id="comment_summary" rows="4" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">{{ comment }}</textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Generate Summary
+                    </button>
+                </form>
+            </div>
+
+            <!-- Analyze Sentiment Section -->
+            <div id="analyze-sentiment-section" class="section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Analyze Sentiment</h2>
+                <form id="sentiment-form" method="POST" action="/analyze_sentiment" onsubmit="addLanguageToForm('sentiment-form')" class="space-y-4">
+                    <div>
+                        <label for="comment_sentiment" class="block text-sm font-medium text-gray-700 mb-2">Customer Comment:</label>
+                        <textarea name="comment" id="comment_sentiment" rows="4" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">{{ comment }}</textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Analyze Sentiment
+                    </button>
+                </form>
+            </div>
+
+            <!-- Generate Complete Email Section -->
+            <div id="generate-email-section" class="section bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Generate Complete Email</h2>
+                <form id="email-form" method="POST" action="/generate_email" onsubmit="addLanguageToForm('email-form')" class="space-y-4">
+                    <input type="hidden" name="comment" value="{{ comment }}">
+                    <input type="hidden" name="summary" value="{{ summary }}">
+                    <input type="hidden" name="sentiment" value="{{ sentiment }}">
+                    <input type="hidden" name="subject" value="{{ subject }}">
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Generate Email
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="space-y-6 mt-8">
+            {% if email %}
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Generated Email:</h2>
+                    <textarea id="email" rows="6" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" readonly>{{ email }}</textarea>
+                </div>
+            {% endif %}
+
+            {% if subject %}
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Generated Email Subject:</h2>
+                    <textarea id="subject" rows="2" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" readonly>{{ subject }}</textarea>
+                </div>
+            {% endif %}
+
+            {% if summary %}
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Generated Summary:</h2>
+                    <textarea id="summary" rows="2" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" readonly>{{ summary }}</textarea>
+                </div>
+            {% endif %}
+
+            {% if sentiment %}
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Sentiment Analysis Result:</h2>
+                    <textarea id="sentiment" rows="2" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" readonly>{{ sentiment }}</textarea>
+                </div>
+            {% endif %}
+
+            {% if comment %}
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Customer Comment:</h2>
+                    <textarea id="comment_display" rows="4" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" readonly>{{ comment }}</textarea>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

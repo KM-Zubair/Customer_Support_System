@@ -62,12 +62,13 @@
                 <label for="action" class="block text-sm font-medium text-gray-700 mb-2">Select an Action:</label>
                 <select id="action" onchange="showSection(this.value)" class="form-select block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">-- Select an Action --</option>
-                    <option value="generate-comment-section">1. Generate Customer Comment</option>
-                    <option value="generate-subject-section">2. Generate Email Subject</option>
-                    <option value="generate-summary-section">3. Generate Summary</option>
-                    <option value="analyze-sentiment-section">4. Analyze Sentiment</option>
-                    <option value="generate-email-section">5. Generate Complete Email</option>
+                    <option value="generate-comment-section" {% if selected_action == 'generate-comment-section' %}selected{% endif %}>1. Generate Customer Comment</option>
+                    <option value="generate-subject-section" {% if selected_action == 'generate-subject-section' %}selected{% endif %}>2. Generate Email Subject</option>
+                    <option value="generate-summary-section" {% if selected_action == 'generate-summary-section' %}selected{% endif %}>3. Generate Summary</option>
+                    <option value="analyze-sentiment-section" {% if selected_action == 'analyze-sentiment-section' %}selected{% endif %}>4. Analyze Sentiment</option>
+                    <option value="generate-email-section" {% if selected_action == 'generate-email-section' %}selected{% endif %}>5. Generate Complete Email</option>
                 </select>
+                
             </div>
         </div>
 

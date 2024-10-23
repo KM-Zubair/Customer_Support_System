@@ -1,0 +1,35 @@
+{
+    "TechPro Ultrabook": {
+        "name": "TechPro Ultrabook",
+        "category": "Computers and Laptops",
+        "brand": "TechPro",
+        "model_number": "TP-UB100",
+        "warranty": "1 year",
+        "rating": 4.5,
+        "features": ["13.3-inch display", "8GB RAM", "256GB SSD", "Intel Core i5 processor"],
+        "description": "A sleek and lightweight ultrabook for everyday use.",
+        "price": 799.99
+    },
+    "BlueWave Gaming Laptop": {
+        "name": "BlueWave Gaming Laptop",
+        "category": "Computers and Laptops",
+        "brand": "BlueWave",
+        "model_number": "BW-GL200",
+        "warranty": "2 years",
+        "rating": 4.7,
+        "features": ["15.6-inch display", "16GB RAM", "512GB SSD", "NVIDIA GeForce RTX 3060"],
+        "description": "A high-performance gaming laptop for an immersive experience.",
+        "price": 1199.99
+    },
+    "PowerLite Convertible": {
+        "name": "PowerLite Convertible",
+        "category": "Computers and Laptops",
+        "brand": "PowerLite",
+        "model_number": "PL-CV300",
+        "warranty": "1 year",
+        "rating": 4.3,
+        "features": ["14-inch touchscreen", "8GB RAM", "256GB SSD", "360-degree hinge"],
+        "description": "A versatile convertible laptop with a responsive touchscreen.",
+        "price": 699.99
+    }
+}

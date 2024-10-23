@@ -2,6 +2,8 @@
 
 This project implements a Customer Support System that leverages OpenAI's ChatGPT API to moderate input, classify service requests, and answer customer questions using **Chain of Thought Reasoning**. The project is built using Python (Flask) for the backend and uses HTML/CSS for the frontend interface.
 
+## [Presentation Slides](https://docs.google.com/presentation/d/1L_g4zw8f4YyRu5dIMp1oqZVhxe0B5vtqb-jsjk_9DwA/edit#slide=id.g2fc51b79cda_0_0)
+
 ## Features
 1. **Input Moderation**: Checks customer input for inappropriate content.
 2. **Service Request Classification**: Classifies customer messages into predefined categories.

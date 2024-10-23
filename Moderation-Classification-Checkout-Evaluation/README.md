@@ -1,6 +1,3 @@
-Here’s the complete `README.md` file in markdown format, with all the necessary sections:
-
-
 # Customer Support System with OpenAI ChatGPT API
 
 This project implements a Customer Support System that leverages OpenAI's ChatGPT API to moderate input, classify service requests, and answer customer questions using **Chain of Thought Reasoning**. The project is built using Python (Flask) for the backend and uses HTML/CSS for the frontend interface.

@@ -9,101 +9,131 @@
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
 
-        <!-- Security Feature Enabled Message - Only for Moderation (Step 1) -->
-        {% if moderation %}
-        <div class="bg-blue-100 border border-blue-500 text-blue-700 px-4 py-3 rounded-lg mb-6">
-            <strong class="font-bold">Security Feature Enabled:</strong>
-            <span class="block sm:inline">Prompt Injection Prevention Mechanism is active using the following strategies:</span>
-            <ul class="list-disc pl-5 mt-2">
-                <li><strong>Input Delimitation:</strong> User inputs are wrapped in delimiters to prevent system-level instruction overrides.</li>
-                <li><strong>Keyword Detection:</strong> Potentially harmful keywords like "IGNORE" or "OVERRIDE" are detected and blocked.</li>
-            </ul>
+    <!-- Display Security Feature Enabled Message -->
+    {% if moderation %}
+    <div class="bg-blue-100 border border-blue-500 text-blue-700 px-4 py-3 rounded-lg mb-6">
+        <strong class="font-bold">Security Feature Enabled:</strong>
+        <span class="block sm:inline">Prompt Injection Prevention Mechanism is active using the following strategies:</span>
+        <ul class="list-disc pl-5 mt-2">
+            <li><strong>Input Delimitation:</strong> User inputs are wrapped in delimiters to prevent system-level instruction overrides.</li>
+            <li><strong>Keyword Detection:</strong> Potentially harmful keywords like "IGNORE" or "OVERRIDE" are detected and blocked.</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Display Moderation Results Header Conditionally -->
+    {% if moderation and not parsed_steps %}
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">Moderation Results</h1>
+
+        <!-- Display Warning Message for Prompt Injection Block -->
+        {% if message %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+            <strong class="font-bold">Warning:</strong>
+            <span class="block sm:inline">{{ message }}</span>
+            {% if customer_comment %}
+            <p class="text-gray-800 mt-2"><strong>Customer's Prompt:</strong> {{ customer_comment }}</p>
+            {% endif %}
         </div>
         {% endif %}
 
-        <!-- Header for Moderation and Classification Results -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h1 class="text-2xl font-bold text-gray-800 mb-4">
-                {% if classification %}
-                    Classification Results
-                {% else %}
-                    Moderation Results
-                {% endif %}
-            </h1>
-
-            <!-- Customer Comment Display for Moderation -->
-            {% if comment %}
-            <div class="bg-white shadow-md rounded-lg p-4 mb-6">
-                <h2 class="text-lg font-semibold text-gray-700 mb-2">Customer Comment:</h2>
-                <p class="text-gray-700">{{ comment }}</p>
-            </div>
-            {% endif %}
-
-            <!-- Prompt Injection Block Message for Moderation -->
-            {% if message %}
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-                <strong class="font-bold">Warning:</strong>
-                <span class="block sm:inline">{{ message }}</span>
-            </div>
-            {% endif %}
-
-            <!-- Moderation Results Table -->
-            {% if moderation %}
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4">Moderation Category Scores:</h2>
-                <table class="table-auto w-full border-collapse">
-                    <thead>
-                        <tr>
-                            <th class="border-b-2 py-3 text-left">Category</th>
-                            <th class="border-b-2 py-3 text-left">Flagged</th>
-                            <th class="border-b-2 py-3 text-left">Score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for category, score in moderation['category_scores'].items() %}
-                        <tr>
-                            <td class="border-b py-2 text-gray-800">{{ category }}</td>
-                            <td class="border-b py-2 text-gray-800">
-                                {% if moderation['categories'][category] %}
-                                <span class="text-red-500 font-bold">Yes</span>
-                                {% else %}
-                                <span class="text-green-500 font-bold">No</span>
-                                {% endif %}
-                            </td>
-                            <td class="border-b py-2 text-gray-800">{{ score }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% endif %}
-
-        <!-- Classification Results Section -->
-        {% if classification %}
-        <div class="bg-white shadow-md rounded-lg p-6 mt-8">
-            <h2 class="text-lg font-semibold text-gray-700 mb-4">Classification Results:</h2>
+        <!-- Moderation Results Table, Only Shown if Not Blocked and Both Keys Exist -->
+        {% if moderation and 'categories' in moderation and 'category_scores' in moderation %}
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Moderation Category Scores:</h2>
             <table class="table-auto w-full border-collapse">
                 <thead>
                     <tr>
-                        <th class="border-b-2 py-3 text-left text-gray-600 font-semibold">Category</th>
-                        <th class="border-b-2 py-3 text-left text-gray-600 font-semibold">Value</th>
+                        <th class="border-b-2 py-3 text-left">Category</th>
+                        <th class="border-b-2 py-3 text-left">Flagged</th>
+                        <th class="border-b-2 py-3 text-left">Score</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="border-b">
-                        <td class="py-3 text-gray-800">Primary</td>
-                        <td class="py-3 text-gray-800">{{ classification.primary }}</td>
+                    {% for category, score in moderation['category_scores'].items() %}
+                    <tr>
+                        <td class="border-b py-2 text-gray-800">{{ category }}</td>
+                        <td class="border-b py-2 text-gray-800">
+                            {% if moderation['categories'][category] %}
+                            <span class="text-red-500 font-bold">Yes</span>
+                            {% else %}
+                            <span class="text-green-500 font-bold">No</span>
+                            {% endif %}
+                        </td>
+                        <td class="border-b py-2 text-gray-800">{{ score }}</td>
                     </tr>
-                    <tr class="border-b">
-                        <td class="py-3 text-gray-800">Secondary</td>
-                        <td class="py-3 text-gray-800">{{ classification.secondary }}</td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
         {% endif %}
-
-        </div>
     </div>
+    {% endif %}
+
+    <!-- Classification Results Section -->
+{% if classification %}
+<div class="bg-white shadow-md rounded-lg p-6 mt-8">
+    <h2 class="text-lg font-semibold text-gray-700 mb-4">Classification Results:</h2>
+    <table class="table-auto w-full border-collapse">
+        <thead>
+            <tr>
+                <th class="border-b-2 py-3 text-left text-gray-600 font-semibold">Category</th>
+                <th class="border-b-2 py-3 text-left text-gray-600 font-semibold">Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="border-b">
+                <td class="py-3 text-gray-800">Primary</td>
+                <td class="py-3 text-gray-800">{{ classification.primary }}</td>
+            </tr>
+            <tr class="border-b">
+                <td class="py-3 text-gray-800">Secondary</td>
+                <td class="py-3 text-gray-800">{{ classification.secondary }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+
+    <!-- Chain of Thought Reasoning (Step-by-Step Analysis) -->
+    {% if parsed_steps %}
+    <div class="bg-white shadow-md rounded-lg p-6 mt-8">
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">Step-by-Step Analysis</h2>
+
+        <!-- Step 1 -->
+        {% if parsed_steps.step1 %}
+        <div class="bg-gray-100 p-4 rounded-lg mb-4">
+            <h3 class="text-md font-semibold text-gray-700">Step 1: Type of Inquiry</h3>
+            <p class="text-gray-800">{{ parsed_steps.step1 }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Step 2 -->
+        {% if parsed_steps.step2 %}
+        <div class="bg-gray-100 p-4 rounded-lg mb-4">
+            <h3 class="text-md font-semibold text-gray-700">Step 2: Identifying Specific Products</h3>
+            <p class="text-gray-800">{{ parsed_steps.step2 }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Step 3 -->
+        {% if parsed_steps.step3 %}
+        <div class="bg-gray-100 p-4 rounded-lg mb-4">
+            <h3 class="text-md font-semibold text-gray-700">Step 3: Listing Assumptions</h3>
+            <p class="text-gray-800">{{ parsed_steps.step3 }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Final Response to User -->
+        {% if parsed_steps.response %}
+        <div class="bg-gray-100 p-4 rounded-lg">
+            <h3 class="text-md font-semibold text-gray-700">Response to Customer</h3>
+            <p class="text-gray-800">{{ parsed_steps.response }}</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
 </body>
 </html>

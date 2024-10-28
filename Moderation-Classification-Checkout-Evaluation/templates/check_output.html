@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Output</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">Check Output</h1>
+            <ul class="mb-4">
+                {% for case in test_cases %}
+                    <li>
+                        <strong>User Message:</strong> {{ case.user_message }}<br>
+                        <strong>Expected Answer:</strong> {{ case.expected_answer }}
+                    </li>
+                {% endfor %}
+            </ul>
+            <form method="POST">
+                <label for="user_message" class="block text-sm font-medium text-gray-700 mb-2">Enter User Message:</label>
+                <textarea id="user_message" name="user_message" rows="2" class="form-textarea block w-full rounded-md border-gray-300"></textarea>
+
+                <label for="agent_response" class="block text-sm font-medium text-gray-700 mt-4 mb-2">Enter Agent Response:</label>
+                <textarea id="agent_response" name="agent_response" rows="4" class="form-textarea block w-full rounded-md border-gray-300"></textarea>
+
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 mt-4">
+                    Check Output
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

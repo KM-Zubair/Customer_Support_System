@@ -3,27 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classify User Message</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <title>Classify Message</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
-        <!-- Header -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-6">Classify User Message</h1>
-            
-            <!-- Form to Input User Message for Classification -->
-            <form method="POST" action="/classify_message_page">
-                <div>
-                    <label for="user_message" class="block text-sm font-medium text-gray-700 mb-2">Enter Message:</label>
-                    <textarea id="user_message" name="user_message" rows="4" class="form-textarea block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
-                </div>
-                
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-4">
-                    Classify Message
-                </button>
-            </form>
-        </div>
+        <h1 class="text-2xl font-bold mb-4">Classify User Message</h1>
+        <form action="/classify_message_page" method="POST">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="user_message">Enter Message:</label>
+            <textarea name="user_message" id="user_message" class="w-full border border-gray-300 p-2 rounded-lg mb-4"></textarea>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Classify Message
+            </button>
+        </form>
     </div>
 </body>
 </html>

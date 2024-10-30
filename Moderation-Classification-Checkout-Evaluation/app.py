@@ -270,85 +270,187 @@ def answer_question():
     return render_template('results.html', parsed_steps=parsed_steps)
 
 #Step 4
-# Function for OpenAI Moderation API
-def check_output_moderation(output_text):
-    moderation_response = client.moderations.create(input=output_text)
-    result = moderation_response.results[0]
+# Route for checking moderation and factuality
+@app.route('/check_output', methods=['GET', 'POST'])
+def check_output():
+    if request.method == 'POST':
+        # Retrieve form data from frontend
+        customer_message = request.form.get('customer_message')
+        agent_response = request.form.get('agent_response')
+        wrapped_agent_respopnse = wrap_user_input(agent_response)
+        # Convert product data to a string format for the factuality check
+        product_information = json.dumps(products, indent=2)
+
+        # Moderation check
+        response = client.moderations.create(
+            model="omni-moderation-latest",
+            input=[{"type": "text", "text": wrapped_agent_respopnse}]
+            
+        )
+        moderation_output = response.results[0].model_dump()
+        
+        # Print moderation output for debugging
+        print("Moderation Output:", moderation_output)
+
+        # System message for fact-checking
+        system_message = """
+        You are an assistant that evaluates whether customer service agent responses sufficiently answer customer questions and validate that all facts are correct based on product information. Respond with Y (Yes) or N (No).
+        """
+
+        # Construct Q/A pair for factuality check
+        q_a_pair = f"""
+        Customer message: ```{customer_message}```
+        Product information: ```{product_information}```
+        Agent response: ```{agent_response}```
+
+        Does the response use the retrieved information correctly?
+        Does the response sufficiently answer the question?
+        Output Y or N
+        """
+
+        # Define messages for OpenAI completion
+        messages = [
+            {'role': 'system', 'content': system_message},
+            {'role': 'user', 'content': q_a_pair}
+        ]
+
+        # Get factuality check response
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+            temperature=0,
+            max_tokens=1
+        )
+        factuality_response = response.choices[0].message.content
+        print("Factuality Check Response:", factuality_response)
+
+        # Render results to template
+        return render_template('check_output.html', moderation=moderation_output, factuality=factuality_response)
     
-    # Extract each moderation result
-    moderation_result = {
-        "flagged": result.flagged,
-        "categories": {
-            "hate": result.categories.hate,
-            "self-harm": result.categories.self_harm,
-            "sexual": result.categories.sexual,
-            "violence": result.categories.violence,
-            "harassment": result.categories.harassment
-        },
-        "category_scores": {
-            "hate": result.category_scores.hate,
-            "self-harm": result.category_scores.self_harm,
-            "sexual": result.category_scores.sexual,
-            "violence": result.category_scores.violence,
-            "harassment": result.category_scores.harassment
-        }
-    }
-    return moderation_result
+    return render_template('check_output.html')
 
 
+### Step 5
 
-# Function to get self-evaluation from model
-def evaluate_output_factuality(user_message, product_info, agent_response):
-    system_prompt = """
-    You are an assistant evaluating customer service responses. 
-    Verify if the response uses provided product information accurately.
-    Respond with 'Y' if it sufficiently answers the query and uses facts correctly, 'N' otherwise.
-    """
-    q_a_pair = f"""
-    Customer message: ```{user_message}```
-    Product information: ```{product_info}```
-    Agent response: ```{agent_response}```
-    """
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": q_a_pair}
-    ]
+# Example function to get completion from OpenAI
+def get_completion_from_messages(messages):
+    # API call with messages payload (assuming ChatGPT or completion endpoint)
     response = client.chat.completions.create(
-        model="gpt-4",
-        messages=messages,
-        temperature=0,
-        max_tokens=100
-    )
+            model="gpt-4",
+            messages=messages
+        )
+    # Return the assistant's response
     return response.choices[0].message.content
 
-# Route to render the output check page with test cases
-@app.route('/check_output_page', methods=['GET', 'POST'])
-def check_output_page():
-    test_cases = [
-        {"user_message": "Tell me about the TechPro Ultrabook.", "expected_answer": "This is a detailed description..."},
-        {"user_message": "I want info on a high-performance gaming laptop.", "expected_answer": "The BlueWave Gaming Laptop..."}
+# Add find_category_and_product_v1 to app.py
+def find_category_and_product_v1(user_input, products_and_category):
+    delimiter = "####"
+    system_message = f"""
+    You will be provided with customer service queries. \
+    The customer service query will be delimited with {delimiter} characters.
+    Output a python list of json objects, where each object has the following format:
+        'category': <one of Computers and Laptops, Smartphones and Accessories, \
+        Televisions and Home Theater Systems, Gaming Consoles and Accessories, \
+        Audio Equipment, Cameras and Camcorders>,
+    AND
+        'products': <a list of products that must be found in the allowed products below>
+    Where the categories and products must be found in the customer service query.
+    If a product is mentioned, it must be associated with the correct category in the \
+    allowed products list below.
+    If no products or categories are found, output an empty list.
+    List out all products that are relevant to the customer service query based on how \
+    closely it relates to the product name and product category.
+    Allowed products: {products_and_category}
+    """
+    
+    few_shot_user_1 = "I want the most expensive computer."
+    few_shot_assistant_1 = """ 
+    [{'category': 'Computers and Laptops', \
+      'products': ['TechPro Ultrabook', 'BlueWave Gaming Laptop', \
+      'PowerLite Convertible', 'TechPro Desktop', 'BlueWave Chromebook']}]
+    """
+    
+    messages = [
+        {'role': 'system', 'content': system_message},
+        {'role': 'user', 'content': f"{delimiter}{few_shot_user_1}{delimiter}"},
+        {'role': 'assistant', 'content': few_shot_assistant_1},
+        {'role': 'user', 'content': f"{delimiter}{user_input}{delimiter}"}
     ]
 
-    if request.method == 'POST':
-        user_message = request.form.get('user_message')
-        agent_response = request.form.get('agent_response')
-        
-        # Check with Moderation API
-        moderation_result = check_output_moderation(agent_response)
-        
-        # Check factuality with self-evaluation
-        product_info = json.dumps(products)  # Provide full product data for evaluation
-        factuality_result = evaluate_output_factuality(user_message, product_info, agent_response)
-        
-        return render_template(
-            'results.html',
-            moderation=moderation_result,
-            factuality=factuality_result,
-            user_message=user_message,
-            agent_response=agent_response
-        )
+    return get_completion_from_messages(messages)
+
+# Update relevant routes to use find_category_and_product_v1
+
+@app.route('/process_query', methods=['POST'])
+def process_query():
+    data = request.json
+    user_input = data.get("user_input")
+    products_and_category = data.get("products_and_category")
     
-    return render_template('check_output.html', test_cases=test_cases)
+    # Use find_category_and_product_v1 to process the query
+    response = find_category_and_product_v1(user_input, products_and_category)
+    
+    # Convert response to JSON and return
+    return jsonify({"response": response})
+
+def run_evaluation(test_cases):
+    """Run evaluation on a set of test cases with logging."""
+    correct = 0
+    total = len(test_cases)
+    
+    for i, test_case in enumerate(test_cases):
+        user_input = test_case["input"]
+        expected_output = test_case["expected"]
+        
+        # Get the actual output from the model
+        actual_output = find_category_and_product_v1(user_input, products)
+        
+        # Logging for each test case
+        print(f"\nTest Case {i + 1}")
+        print("User Input:", user_input)
+        print("Expected Output:", expected_output)
+        print("Actual Output:", actual_output)
+        
+        # Compare expected and actual outputs and log the result
+        if actual_output.strip() == expected_output.strip():
+            print("Result: Match")
+            correct += 1
+        else:
+            print("Result: Mismatch")
+    
+    # Calculate fraction of correct responses
+    fraction_correct = correct / total if total > 0 else 0
+    print(f"\nFinal Fraction of Correct Responses: {fraction_correct:.2f}")
+    
+    return fraction_correct
+
+
+# Add these test cases
+test_cases = [
+    {
+        "input": "I want to buy a gaming laptop",
+        "expected": """[{'category': 'Computers and Laptops', 'products': ['BlueWave Gaming Laptop']}]"""
+    },
+    {
+        "input": "What computers do you have?",
+        "expected": """[{'category': 'Computers and Laptops', 'products': ['TechPro Ultrabook', 'BlueWave Gaming Laptop', 'PowerLite Convertible', 'TechPro Desktop', 'BlueWave Chromebook']}]"""
+    },
+    {
+        "input": "Tell me about your TVs",
+        "expected": """[{'category': 'Televisions and Home Theater Systems', 'products': ['CineView 4K TV', 'SoundMax Home Theater', 'CineView 8K TV', 'CineView OLED TV']}]"""
+    }
+]
+
+# Add this new route
+@app.route('/evaluation', methods=['GET', 'POST'])
+def evaluation():
+    fraction_correct = None
+    if request.method == 'POST':
+        # Run the evaluation when the form is submitted
+        fraction_correct = run_evaluation(test_cases)
+    
+    return render_template('evaluation.html', fraction_correct=fraction_correct)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

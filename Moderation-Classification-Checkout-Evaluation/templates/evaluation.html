@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation - Step 5</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div class="container mx-auto max-w-2xl bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Step 5: Evaluation Part I</h1>
+        
+        <!-- Form to trigger evaluation -->
+        <form method="POST" action="/evaluation" class="space-y-4 text-center">
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                Run Evaluation
+            </button>
+        </form>
+
+        
+    <!-- Display results if available -->
+    {% if fraction_correct is not none %}
+    <div class="mt-8 text-center">
+        <h2 class="text-xl font-bold text-gray-800">Evaluation Result</h2>
+        <p class="text-lg text-gray-700 mt-2">
+            Fraction of Correct Responses: {{ fraction_correct | round(2) }}
+        </p>
+    </div>
+    {% endif %}
+
+    </div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-# LangChain Chat with Your Data
+# [Presentation Slides](https://docs.google.com/presentation/d/1ADWtg1BlQxrdz2mq7gHSkfWHPJr2jywobHXdAF3YRYs/edit?usp=sharing) | LangChain Chat with Your Data
 
 This project builds a conversational chatbot using LangChain and OpenAI, enabling question-answering from various document sources, including PDFs, YouTube transcripts, URLs, and optionally, Notion databases. It utilizes Retrieval-Augmented Generation (RAG) for efficient and contextually accurate responses from embedded document data.
 

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Assistant</title>
+    <!-- Embedded CSS -->
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #007BFF, #0056b3);
+            color: #fff;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Container styling */
+        .container {
+            text-align: center;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        /* Title styling */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        /* Button styling */
+        button {
+            background-color: #FF5733;
+            color: #fff;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e04e2a;
+            transform: translateY(-3px);
+            box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Your AI Assistant</h1>
+        <button id="start-assistant">Start Talking</button>
+        <p id="status" style="margin-top: 20px; font-size: 14px;"></p>
+    </div>
+
+    <!-- Embedded JavaScript -->
+    <script>
+        document.getElementById("start-assistant").addEventListener("click", () => {
+            const status = document.getElementById("status");
+            status.textContent = "Starting the assistant...";
+            status.style.color = "#FF5733";
+
+            // Simulate an API call to start the assistant
+            fetch("/start", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    status.textContent = data.status;
+                    status.style.color = "#28a745"; // Success color
+                })
+                .catch(error => {
+                    status.textContent = "Failed to start the assistant. Try again.";
+                    status.style.color = "#dc3545"; // Error color
+                });
+        });
+    </script>
+</body>
+</html>

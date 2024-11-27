@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Interaction</title>
+    <!-- Embedded CSS -->
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #00c6ff, #0072ff);
+            color: #fff;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Container styling */
+        .container {
+            text-align: center;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        /* Title styling */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Subheading */
+        p {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Button styling */
+        button {
+            background-color: #FF5733;
+            color: #fff;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e04e2a;
+            transform: translateY(-3px);
+            box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Loading animation */
+        .loader {
+            display: none;
+            margin: 20px auto;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top: 5px solid #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Voice Interaction</h1>
+        <p>Click the button below to start interacting with your AI Assistant!</p>
+        <button id="start-interaction">Start Interaction</button>
+        <div class="loader" id="loading-indicator"></div>
+        <p id="interaction-status" style="margin-top: 20px; font-size: 14px;"></p>
+    </div>
+
+    <!-- Embedded JavaScript -->
+    <script>
+        const button = document.getElementById("start-interaction");
+        const status = document.getElementById("interaction-status");
+        const loader = document.getElementById("loading-indicator");
+
+        button.addEventListener("click", () => {
+            status.textContent = "";
+            loader.style.display = "block"; // Show loading animation
+
+            // Simulate an API call to start interaction
+            fetch("/start", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    loader.style.display = "none"; // Hide loading animation
+                    status.textContent = data.status;
+                    status.style.color = "#28a745"; // Success color
+                })
+                .catch(error => {
+                    loader.style.display = "none"; // Hide loading animation
+                    status.textContent = "Failed to start interaction. Try again.";
+                    status.style.color = "#dc3545"; // Error color
+                });
+        });
+    </script>
+</body>
+</html>

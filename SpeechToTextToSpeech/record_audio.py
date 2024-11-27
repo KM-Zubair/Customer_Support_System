@@ -1,10 +1,6 @@
 import speech_recognition as sr
-import queue
 
 def record_audio(audio_queue, energy=300, pause=0.8, dynamic_energy=False):
-    """
-    Records audio from the microphone and puts it into an audio queue.
-    """
     recognizer = sr.Recognizer()
     recognizer.energy_threshold = energy
     recognizer.pause_threshold = pause

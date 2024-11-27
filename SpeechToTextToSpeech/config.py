@@ -9,6 +9,5 @@ def init_api():
             key, value = line.strip().split("=")
             os.environ[key] = value
 
-    # Set OpenAI credentials
     os.environ["OPENAI_API_KEY"] = os.environ.get("API_KEY")
     os.environ["OPENAI_ORG_ID"] = os.environ.get("ORG_ID")

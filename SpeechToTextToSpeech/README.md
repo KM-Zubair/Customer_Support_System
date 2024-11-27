@@ -13,7 +13,7 @@ This project demonstrates how to build a real-time AI voice assistant capable of
 3. [Technologies Used](#technologies-used)
 4. [Setup Instructions](#setup-instructions)
    - [Dependencies](#dependencies)
-   - [Data Preparation](#data-preparation)
+   - [Environment Variables](#environment-variables)
    - [Running the Application](#running-the-application)
 5. [Usage](#usage)
 6. [Folder Structure](#folder-structure)
@@ -22,32 +22,43 @@ This project demonstrates how to build a real-time AI voice assistant capable of
 ---
 
 ## Project Overview
-This project simulates the behavior of a personal AI assistant, similar to Alexa, but enhanced with OpenAI's GPT capabilities. It uses:
-- OpenAI Whisper for speech-to-text transcription.
-- GPT models to provide intelligent responses.
-- Google Text-to-Speech (gTTS) for converting text responses to audio.
+The **Real-time Speech to Text to Speech** project simulates an AI assistant with the following workflow:
+1. **Voice Input**: The user interacts via a microphone, starting with a wake word like "Hey Computer."
+2. **Speech-to-Text**: OpenAI Whisper transcribes the voice input into text.
+3. **Response Generation**: OpenAI GPT generates intelligent responses based on the query.
+4. **Text-to-Speech**: gTTS converts the response to audio, which is then played back to the user.
 
-The assistant can answer questions, engage in simple conversations, and provide feedback audibly.
+The system provides a visually appealing web interface for both welcoming users and facilitating real-time interaction.
 
 ---
 
 ## Features
-- Real-time voice input using a microphone.
-- Transcription of speech to text via OpenAI Whisper.
-- Intelligent response generation using OpenAI GPT models.
-- Conversion of responses to audio using gTTS.
-- Support for wake words and stop words for better control.
-- Caching of repeated queries for faster responses.
-- Error handling for robust performance.
+- **Core Functionalities**:
+  - Real-time transcription of speech to text using OpenAI Whisper.
+  - Dynamic text-based responses generated via OpenAI GPT.
+  - Audio playback of responses using gTTS.
+
+- **Web Interface**:
+  - **Landing Page**: A polished welcome screen (`index.html`) with a button to start interaction.
+  - **Interaction Page**: A real-time interaction page (`interaction.html`) with dynamic status updates and loading indicators.
+
+- **Enhanced User Experience**:
+  - Modern UI with a gradient background, animations, and responsive design.
+  - Feedback on system status, including success and error messages.
 
 ---
 
 ## Technologies Used
 - **Programming Language**: Python
-- **APIs**: OpenAI GPT and Whisper, Google Text-to-Speech (gTTS)
+- **Backend**: Flask
+- **APIs**:
+  - OpenAI GPT for generating text-based responses.
+  - OpenAI Whisper for speech-to-text transcription.
+  - Google Text-to-Speech (gTTS) for converting text to audio.
+- **Frontend**:
+  - Embedded CSS for styling.
+  - Embedded JavaScript for interactivity.
 - **Audio Processing**: PyDub, SpeechRecognition
-- **Concurrency**: Python threading
-- **Additional Tools**: Queue for communication between threads
 
 ---
 
@@ -56,49 +67,63 @@ The assistant can answer questions, engage in simple conversations, and provide 
 ### Dependencies
 Install the required Python libraries:
 ```bash
-pip install openai whisper pydub speechrecognition gtts
+pip install openai whisper pydub speechrecognition flask gtts
 ```
 
-### Data Preparation
-No external datasets are required. Ensure `.env` contains your API credentials:
+### Environment Variables
+Create a `.env` file in the project root and include the following API credentials:
 ```
 API_KEY=<your_openai_api_key>
 ORG_ID=<your_openai_organization_id>
 ```
 
 ### Running the Application
-Run the main program:
+Run the application:
 ```bash
-python main.py
+python app.py
 ```
+
+Access the system via `http://127.0.0.1:5000` in your web browser.
 
 ---
 
 ## Usage
-1. Launch the application using the command above.
-2. Use your microphone to ask a question after the wake word, e.g., "Hey computer, what is the capital of France?"
-3. Listen to the response played via the speakers.
+1. **Landing Page**:
+   - Visit `http://127.0.0.1:5000`.
+   - Click the "Start Talking" button to navigate to the interaction page.
+
+2. **Interaction Page**:
+   - Click the "Start Interaction" button to start the voice assistant.
+   - Speak into the microphone and view real-time feedback.
 
 ---
 
 ## Folder Structure
 ```
 project-root/
+├── app.py                 # Flask backend application
 ├── config.py              # API initialization and environment setup
 ├── record_audio.py        # Handles recording audio from the microphone
-├── transcribe_audio.py    # Transcribes audio using OpenAI Whisper
-├── generate_reply.py      # Generates responses and converts them to audio
-├── main.py                # Orchestrates the entire workflow
-├── requirements.txt       # List of dependencies (optional)
-└── .env                   # Environment variables for API keys
+├── transcribe_audio.py    # Handles transcription using Whisper
+├── generate_reply.py      # Generates responses and plays audio
+├── templates/             # HTML templates for the frontend
+│   ├── index.html         # Landing page
+│   └── interaction.html   # Interaction page
+└── .env                   # Environment variables
 ```
 
 ---
 
 ## Future Enhancements
-- Implement voice embeddings for personalized user interaction.
-- Stream audio responses for faster playback without saving to disk.
-- Add more control features like pause, resume, and custom wake words.
-- Integrate with other APIs like calendars or messaging platforms for additional functionality.
+1. **Voice Embeddings**:
+   - Use voice embeddings for personalized interactions.
+2. **Audio Streaming**:
+   - Stream responses directly for faster playback without saving to disk.
+3. **Multi-Language Support**:
+   - Expand transcription and response generation to multiple languages.
+4. **Advanced Controls**:
+   - Include additional features like pause/resume and custom wake words.
+5. **Integration with APIs**:
+   - Connect with other APIs (e.g., calendars, weather services) for extended functionality.
 
 ---

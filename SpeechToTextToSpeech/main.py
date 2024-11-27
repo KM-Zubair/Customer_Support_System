@@ -16,12 +16,18 @@ def main():
     threading.Thread(target=transcribe_audio, args=(audio_queue, result_queue)).start()
     threading.Thread(target=reply_to_query, args=(result_queue,)).start()
 
-    # Prevent the main thread from exiting
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("Shutting down...")
+    # Thread delay to avoid race conditions
+    time.sleep(1)
+
+    # Periodically clear the result queue
+    while True:
+        try:
+            while not result_queue.empty():
+                result_queue.get_nowait()
+            time.sleep(5)  # Adjust delay as needed
+        except KeyboardInterrupt:
+            print("Shutting down...")
+            break
 
 if __name__ == "__main__":
     main()

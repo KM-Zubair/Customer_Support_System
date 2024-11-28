@@ -3,15 +3,21 @@ from gtts import gTTS
 from pydub import AudioSegment
 from pydub.playback import play
 import os
-import time
+from sfbu_support import load_documents, split_documents, create_vectorstore, setup_conversation_chain
+
+# Initialize document-based conversational retrieval
+documents = load_documents()
+chunks = split_documents(documents)
+vectorstore = create_vectorstore(chunks)
+conversation_chain, memory = setup_conversation_chain(vectorstore)
 
 # Cache for query responses
 response_cache = {}
 
 def reply_to_query(result_queue, stop_word="stop", verbose=False):
     """
-    Generates a reply using OpenAI's GPT and converts it to speech using gTTS.
-    Includes caching and stop word handling.
+    Enhances the reply logic to integrate document-based conversational retrieval
+    while retaining GPT as a fallback for general queries.
     """
     while True:
         question = result_queue.get()
@@ -27,21 +33,37 @@ def reply_to_query(result_queue, stop_word="stop", verbose=False):
             if verbose:
                 print("Cached response used.")
         else:
-            prompt = f"Q: {question}?\nA:"
+            # Try document-based conversational retrieval first
             try:
-                response = openai.Completion.create(
-                    model="text-davinci-002",
-                    prompt=prompt,
-                    temperature=0.5,
-                    max_tokens=100,
-                    stop=["\n"]
-                )
-                answer = response["choices"][0]["text"].strip()
-                response_cache[question] = answer  # Cache the result
-            except Exception as e:
-                answer = "I'm sorry, I couldn't understand the question."
+                answer = conversation_chain.run(question, memory=memory)
                 if verbose:
-                    print(f"Error: {e}")
+                    print("Answer retrieved from document-based conversation chain.")
+            except Exception as e:
+                if verbose:
+                    print(f"Document retrieval error: {e}")
+                answer = None
+
+            # Fallback to OpenAI GPT if no document-based response is found
+            if not answer or answer.strip() == "":
+                prompt = f"Q: {question}?\nA:"
+                try:
+                    response = openai.Completion.create(
+                        model="text-davinci-002",
+                        prompt=prompt,
+                        temperature=0.5,
+                        max_tokens=100,
+                        stop=["\n"]
+                    )
+                    answer = response["choices"][0]["text"].strip()
+                    if verbose:
+                        print("Answer retrieved from OpenAI GPT.")
+                except Exception as e:
+                    answer = "I'm sorry, I couldn't understand the question."
+                    if verbose:
+                        print(f"GPT error: {e}")
+
+            # Cache the result
+            response_cache[question] = answer
 
         # Convert text to speech
         tts = gTTS(text=answer, lang="en", slow=False)

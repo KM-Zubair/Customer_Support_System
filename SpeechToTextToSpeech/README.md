@@ -1,9 +1,11 @@
 # Real-time Speech to Text to Speech: Building Your AI-Based Alexa
 
-This project demonstrates how to build a real-time AI voice assistant capable of transcribing speech to text, generating intelligent responses, and converting the response back into speech. The system integrates OpenAI GPT for generating text responses and Google Text-to-Speech (gTTS) for audio output. It provides an engaging and intuitive way to interact with AI through voice.
+This project demonstrates how to build a real-time AI voice assistant capable of transcribing speech to text, generating intelligent responses, and converting the response back into speech. The system integrates OpenAI GPT for generating text responses and OpenAI's Text-to-Speech for audio output. It also incorporates document-based retrieval functionality for answering questions from specific sources, enhancing its capability to provide accurate and contextual responses.
+
+---
 
 ## Presentation Slides
-- [Real-time Speech to Text to Speech Using gTTS and OpenAI GPT](https://docs.google.com/presentation/d/1CbL2lFYBnSoTADHjQwgMuR8LvWWeAMimzO6QSCxSjxI/edit?usp=sharing)
+- [Real-time Speech to Text to Speech Using OpenAI GPT and Text-to-Speech](https://docs.google.com/presentation/d/1CbL2lFYBnSoTADHjQwgMuR8LvWWeAMimzO6QSCxSjxI/edit?usp=sharing)
 
 ---
 
@@ -25,26 +27,32 @@ This project demonstrates how to build a real-time AI voice assistant capable of
 The **Real-time Speech to Text to Speech** project simulates an AI assistant with the following workflow:
 1. **Voice Input**: The user interacts via a microphone, starting with a wake word like "Hey Computer."
 2. **Speech-to-Text**: OpenAI Whisper transcribes the voice input into text.
-3. **Response Generation**: OpenAI GPT generates intelligent responses based on the query.
-4. **Text-to-Speech**: gTTS converts the response to audio, which is then played back to the user.
+3. **Document-Based Retrieval**: Queries related to specific documents are resolved using a conversational retrieval system.
+4. **Response Generation**: OpenAI GPT generates intelligent responses based on the query.
+5. **Text-to-Speech**: OpenAI's Text-to-Speech converts the response to audio, which is then played back to the user.
 
 The system provides a visually appealing web interface for both welcoming users and facilitating real-time interaction.
 
 ---
 
 ## Features
-- **Core Functionalities**:
-  - Real-time transcription of speech to text using OpenAI Whisper.
-  - Dynamic text-based responses generated via OpenAI GPT.
-  - Audio playback of responses using gTTS.
+### **Core Functionalities**:
+- **Real-Time Interaction**:
+  - Transcribes speech to text using OpenAI Whisper.
+  - Resolves queries via document-based conversational retrieval or GPT for fallback responses.
+  - Plays responses using OpenAI's Text-to-Speech.
 
 - **Web Interface**:
   - **Landing Page**: A polished welcome screen (`index.html`) with a button to start interaction.
   - **Interaction Page**: A real-time interaction page (`interaction.html`) with dynamic status updates and loading indicators.
 
-- **Enhanced User Experience**:
-  - Modern UI with a gradient background, animations, and responsive design.
-  - Feedback on system status, including success and error messages.
+- **Document-Based Support**:
+  - Answers questions from specific sources (PDF, YouTube transcript, or URLs).
+  - Implements conversational retrieval using LangChain and ChromaDB.
+
+### **Enhanced User Experience**:
+- Modern UI with a gradient background, animations, and responsive design.
+- Feedback on system status, including success and error messages.
 
 ---
 
@@ -52,13 +60,16 @@ The system provides a visually appealing web interface for both welcoming users 
 - **Programming Language**: Python
 - **Backend**: Flask
 - **APIs**:
-  - OpenAI GPT for generating text-based responses.
   - OpenAI Whisper for speech-to-text transcription.
-  - Google Text-to-Speech (gTTS) for converting text to audio.
+  - OpenAI GPT for generating text-based responses.
+  - OpenAI Text-to-Speech for converting text to audio.
 - **Frontend**:
   - Embedded CSS for styling.
   - Embedded JavaScript for interactivity.
-- **Audio Processing**: PyDub, SpeechRecognition
+- **Document-Based Retrieval**:
+  - LangChain for conversational retrieval.
+  - ChromaDB for vector storage and retrieval.
+- **Audio Processing**: PyDub, SpeechRecognition.
 
 ---
 
@@ -67,7 +78,7 @@ The system provides a visually appealing web interface for both welcoming users 
 ### Dependencies
 Install the required Python libraries:
 ```bash
-pip install openai whisper pydub speechrecognition flask gtts
+pip install openai whisper langchain chromadb pydub speechrecognition flask
 ```
 
 ### Environment Variables
@@ -95,6 +106,7 @@ Access the system via `http://127.0.0.1:5000` in your web browser.
 2. **Interaction Page**:
    - Click the "Start Interaction" button to start the voice assistant.
    - Speak into the microphone and view real-time feedback.
+   - Ask questions related to documents or general queries.
 
 ---
 
@@ -112,7 +124,6 @@ project-root/
 │   └── interaction.html   # Interaction page
 ├── requirements.txt       # Python dependencies
 └── .env                   # Environment variables
-
 ```
 
 ---

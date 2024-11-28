@@ -103,13 +103,16 @@ Access the system via `http://127.0.0.1:5000` in your web browser.
 project-root/
 ├── app.py                 # Flask backend application
 ├── config.py              # API initialization and environment setup
+├── sfbu_support.py        # Library for document-based conversational retrieval (Step 1 logic)
 ├── record_audio.py        # Handles recording audio from the microphone
 ├── transcribe_audio.py    # Handles transcription using Whisper
-├── generate_reply.py      # Generates responses and plays audio
+├── generate_reply.py      # Enhances response generation with document-based retrieval and GPT
 ├── templates/             # HTML templates for the frontend
 │   ├── index.html         # Landing page
 │   └── interaction.html   # Interaction page
+├── requirements.txt       # Python dependencies
 └── .env                   # Environment variables
+
 ```
 
 ---

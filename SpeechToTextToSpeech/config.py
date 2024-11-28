@@ -1,13 +1,10 @@
+from dotenv import load_dotenv
 import os
 
 def init_api():
     """
-    Load API credentials from a `.env` file and set them as environment variables.
+    Loads environment variables from the `.env` file.
     """
-    with open(".env") as env_file:
-        for line in env_file:
-            key, value = line.strip().split("=")
-            os.environ[key] = value
-
-    os.environ["OPENAI_API_KEY"] = os.environ.get("API_KEY")
-    os.environ["OPENAI_ORG_ID"] = os.environ.get("ORG_ID")
+    load_dotenv()
+    # Ensure OpenAI API key is set
+    os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")

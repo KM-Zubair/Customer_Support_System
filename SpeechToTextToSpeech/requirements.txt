@@ -1,0 +1,7 @@
+Flask
+langchain
+chromadb
+openai
+pydub
+speechrecognition
+python-dotenv

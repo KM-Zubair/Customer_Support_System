@@ -1,5 +1,4 @@
 import openai
-from gtts import gTTS
 from pydub import AudioSegment
 from pydub.playback import play
 import os
@@ -17,7 +16,7 @@ response_cache = {}
 def reply_to_query(result_queue, stop_word="stop", verbose=False):
     """
     Enhances the reply logic to integrate document-based conversational retrieval
-    while retaining GPT as a fallback for general queries.
+    while replacing gTTS with OpenAI's Text-to-Speech.
     """
     while True:
         question = result_queue.get()
@@ -58,16 +57,27 @@ def reply_to_query(result_queue, stop_word="stop", verbose=False):
                     if verbose:
                         print("Answer retrieved from OpenAI GPT.")
                 except Exception as e:
-                    answer = "I'm sorry, I couldn't understand the question."
+                    answer = "I'm sorry, I couldn't process your request."
                     if verbose:
                         print(f"GPT error: {e}")
 
             # Cache the result
             response_cache[question] = answer
 
-        # Convert text to speech
-        tts = gTTS(text=answer, lang="en", slow=False)
-        tts.save("reply.mp3")
-        audio = AudioSegment.from_mp3("reply.mp3")
-        play(audio)
-        os.remove("reply.mp3")
+        # Replace gTTS with OpenAI's Text-to-Speech
+        try:
+            tts_response = openai.Audio.create(
+                model="text-to-speech",
+                text=answer,
+                voice="en-US-Wavenet-D"  # Adjust the voice as needed
+            )
+            audio_file = "reply.wav"
+            with open(audio_file, "wb") as f:
+                f.write(tts_response["audio_content"])
+
+            # Play the audio
+            audio = AudioSegment.from_file(audio_file, format="wav")
+            play(audio)
+            os.remove(audio_file)
+        except Exception as e:
+            print(f"Error with OpenAI TTS: {e}")

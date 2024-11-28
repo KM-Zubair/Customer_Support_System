@@ -4,8 +4,8 @@ This project demonstrates how to build a cybersecurity anomaly detection system 
 
 ---
 
-## **Presentation Slides**
-- **Cybersecurity: Anomaly Detection Using OpenAI Embeddings**
+## [Presentation Slides](https://docs.google.com/presentation/d/12_FRpNJjY1wypXGc8DB285NvrhZ-O4_7rq0aKDqz-QM/edit?usp=sharing)
+
 
 ---
 

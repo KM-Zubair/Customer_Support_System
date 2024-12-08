@@ -8,31 +8,49 @@
 </head>
 <body class="bg-light">
     <div class="container py-5">
+        <!-- Header -->
         <div class="text-center mb-5">
             <h1 class="display-4">Search Results</h1>
-            <p class="lead">Query: "{{ query }}"</p>
+            <p class="lead"><strong>Query:</strong> "{{ query }}"</p>
         </div>
-        <div class="card shadow">
+
+        <!-- Generated Answer Section -->
+        <div class="card shadow mb-4">
             <div class="card-body">
-                <h3>Top Results:</h3>
-                <ul class="list-group mb-4">
+                <h3 class="card-title">Generated Answer</h3>
+                <p class="card-text lead">{{ answer }}</p>
+            </div>
+        </div>
+
+        <!-- Top Results Section -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <h3 class="card-title">Relevant Context</h3>
+                <ul class="list-group">
                     {% for result in results %}
                     <li class="list-group-item">
-                        <strong>{{ result.text }}</strong> 
-                        <span class="badge bg-success float-end">Relevance: {{ result.relevance }}</span>
+                        {{ result }}
                     </li>
                     {% endfor %}
                 </ul>
-                <h3>Evaluation Metrics:</h3>
-                <ul>
-                    <li>MAP: {{ metrics.MAP }}</li>
-                    <li>MRR: {{ metrics.MRR }}</li>
-                    <li>NDCG: {{ metrics.NDCG }}</li>
-                </ul>
-                <div class="mt-4 text-center">
-                    <a href="/" class="btn btn-secondary">Back to Home</a>
-                </div>
             </div>
+        </div>
+
+        <!-- Evaluation Metrics Section -->
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title">Evaluation Metrics</h3>
+                <ul>
+                    <li><strong>MAP:</strong> {{ metrics.MAP }}</li>
+                    <li><strong>MRR:</strong> {{ metrics.MRR }}</li>
+                    <li><strong>NDCG:</strong> {{ metrics.NDCG }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Back to Home Button -->
+        <div class="text-center mt-4">
+            <a href="/" class="btn btn-secondary">Back to Home</a>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

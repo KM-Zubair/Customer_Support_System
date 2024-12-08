@@ -1,0 +1,4 @@
+Flask
+cohere
+weaviate-client
+python-dotenv

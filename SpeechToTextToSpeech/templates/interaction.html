@@ -3,87 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Voice Interaction</title>
-    <!-- Embedded CSS -->
+    <title>Real-time Speech to Text to Speech</title>
     <style>
-        /* General styling */
+        /* Global Styles */
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to bottom, #00c6ff, #0072ff);
-            color: #fff;
             margin: 0;
-            height: 100vh;
+            padding: 0;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: #fff;
         }
 
-        /* Container styling */
         .container {
             text-align: center;
             padding: 30px;
-            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
-            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
             animation: fadeIn 1.5s ease;
         }
 
-        /* Title styling */
         h1 {
             font-size: 2.5rem;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            color: #00d4ff;
         }
 
-        /* Subheading */
-        p {
+        .log {
+            margin: 20px auto;
+            padding: 15px;
+            width: 90%;
+            background: rgba(0, 0, 0, 0.5);
+            color: #00ff9d;
             font-size: 1rem;
-            margin-bottom: 30px;
-            color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
         }
 
-        /* Button styling */
-        button {
-            background-color: #FF5733;
+        .button {
+            background: linear-gradient(to right, #00d2ff, #3a7bd5);
             color: #fff;
             padding: 15px 25px;
             border: none;
             border-radius: 50px;
-            font-size: 16px;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
 
-        button:hover {
-            background-color: #e04e2a;
+        .button:hover {
             transform: translateY(-3px);
-            box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
         }
 
-        /* Loading animation */
-        .loader {
-            display: none;
-            margin: 20px auto;
-            border: 5px solid rgba(255, 255, 255, 0.2);
-            border-top: 5px solid #fff;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+        .output {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #ffcc00;
         }
 
-        /* Animations */
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
+        /* Animation */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -94,52 +83,62 @@
                 transform: translateY(0);
             }
         }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            button {
-                font-size: 14px;
-                padding: 10px 20px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Voice Interaction</h1>
-        <p>Click the button below to start interacting with your AI Assistant!</p>
-        <button id="start-interaction">Start Interaction</button>
-        <div class="loader" id="loading-indicator"></div>
-        <p id="interaction-status" style="margin-top: 20px; font-size: 14px;"></p>
+        <h1>Speech-to-Text-to-Speech Interaction</h1>
+        <div class="log" id="log">
+            <strong>System Log:</strong>
+            <p>User: "What is the weather today?"</p>
+            <p>Transcription: "What is the weather today?"</p>
+            <p>Response: "The weather today is sunny with a high of 25°C."</p>
+            <p>Audio Playback: Playing response...</p>
+        </div>
+        <button class="button" onclick="simulateInteraction()">Simulate Another Interaction</button>
+        <div class="output" id="output">Say something to interact...</div>
     </div>
 
-    <!-- Embedded JavaScript -->
     <script>
-        const button = document.getElementById("start-interaction");
-        const status = document.getElementById("interaction-status");
-        const loader = document.getElementById("loading-indicator");
+        function simulateInteraction() {
+            const log = document.getElementById("log");
+            const output = document.getElementById("output");
 
-        button.addEventListener("click", () => {
-            status.textContent = "";
-            loader.style.display = "block"; // Show loading animation
+            // Simulate different responses
+            const interactions = [
+                {
+                    user: "What time is it?",
+                    transcription: "What time is it?",
+                    response: "It's 3:45 PM.",
+                    playback: "Playing response..."
+                },
+                {
+                    user: "Tell me about AI.",
+                    transcription: "Tell me about AI.",
+                    response: "Artificial Intelligence refers to systems that can perform tasks that usually require human intelligence.",
+                    playback: "Playing response..."
+                },
+                {
+                    user: "Who won the last football match?",
+                    transcription: "Who won the last football match?",
+                    response: "Team A defeated Team B by 3-2.",
+                    playback: "Playing response..."
+                }
+            ];
 
-            // Simulate an API call to start interaction
-            fetch("/start", { method: "POST" })
-                .then(response => response.json())
-                .then(data => {
-                    loader.style.display = "none"; // Hide loading animation
-                    status.textContent = data.status;
-                    status.style.color = "#28a745"; // Success color
-                })
-                .catch(error => {
-                    loader.style.display = "none"; // Hide loading animation
-                    status.textContent = "Failed to start interaction. Try again.";
-                    status.style.color = "#dc3545"; // Error color
-                });
-        });
+            // Pick a random interaction
+            const interaction = interactions[Math.floor(Math.random() * interactions.length)];
+
+            // Update the log and output
+            log.innerHTML = `
+                <strong>System Log:</strong>
+                <p>User: "${interaction.user}"</p>
+                <p>Transcription: "${interaction.transcription}"</p>
+                <p>Response: "${interaction.response}"</p>
+                <p>Audio Playback: ${interaction.playback}</p>
+            `;
+            output.textContent = "Interaction simulated! Check the log for details.";
+        }
     </script>
 </body>
 </html>

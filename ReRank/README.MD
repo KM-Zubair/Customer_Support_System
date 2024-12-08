@@ -1,4 +1,4 @@
-# ReRank Search System
+# [Presentation Slides](https://docs.google.com/presentation/d/1HROtl9cXLolhXa1An-k2j9LtVpE1zkHFxuVQJRqV9PY/edit?usp=sharing) | ReRank Search System
 
 ## Project Overview
 
